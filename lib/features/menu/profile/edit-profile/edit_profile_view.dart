@@ -6,6 +6,7 @@ import 'package:overtime_connect_app/features/menu/menu_view.dart';
 import 'package:overtime_connect_app/features/menu/profile/edit-profile/edit_profile_view_model.dart';
 import 'package:overtime_connect_app/features/menu/profile/edit-profile/widgets/dropdown_working_days.dart';
 import 'package:overtime_connect_app/features/menu/profile/edit-profile/widgets/edit_photo.dart';
+import 'package:overtime_connect_app/features/menu/profile/edit-salary/edit_salary_view.dart';
 import 'package:overtime_connect_app/ui/components/custom_button.dart';
 import 'package:overtime_connect_app/ui/components/custom_header.dart';
 import 'package:overtime_connect_app/ui/components/custom_loading_dialog.dart';
@@ -127,6 +128,21 @@ Widget _buildBody(BuildContext context, EditProfileViewModel model, User user) {
             label: 'Gaji Pokok',
             hintText: 'Gaji Pokok',
             prefixIcon: Assets.svg.icWallet.svg(),
+            suffixIcon: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditSalaryView(salary: user.salary),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.edit,
+                size: 16,
+                color: AppColor.primary,
+              ),
+            ),
           ),
           const SizedBox(
             height: 40.0,

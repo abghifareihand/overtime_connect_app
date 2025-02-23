@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:overtime_connect_app/core/assets/assets.gen.dart';
 import 'package:overtime_connect_app/ui/shared/app_color.dart';
 import 'package:overtime_connect_app/ui/shared/app_font.dart';
+import 'package:overtime_connect_app/ui/utils/formatters.dart';
 
 class CustomHoursOvertime extends StatelessWidget {
   final String label;
@@ -36,6 +37,7 @@ class CustomHoursOvertime extends StatelessWidget {
             fontSize: 12,
           ),
           keyboardType: TextInputType.number,
+          inputFormatters: [DoubleInputFormatter()],
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),

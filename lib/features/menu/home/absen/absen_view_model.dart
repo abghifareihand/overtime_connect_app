@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:overtime_connect_app/core/api/overtime_api.dart';
+import 'package:overtime_connect_app/core/models/calculate_model.dart';
 import 'package:overtime_connect_app/core/models/day_type_model.dart';
 import 'package:overtime_connect_app/core/models/overtime_model.dart';
 import 'package:overtime_connect_app/core/services/pref_service.dart';
@@ -26,17 +27,6 @@ class AbsenViewModel extends BaseViewModel {
   final OvertimeApi overtimeApi;
   final double salary;
   final int workingDays;
-
-  // String? selectedDayType;
-  // final List<String> dayTypes = [
-  //   'Regular',
-  //   'Holiday',
-  // ];
-
-  // void updateDayType(String newDayType) {
-  //   selectedDayType = newDayType;
-  //   notifyListeners();
-  // }
 
   DayType? selectedDayType;
 
@@ -121,9 +111,15 @@ class AbsenViewModel extends BaseViewModel {
         bearerToken: 'Bearer $token',
         request: addOvertimeRequest,
       );
-      log('Login Response: ${addOvertimeResponse.response.statusCode} - ${addOvertimeResponse.data.toJson()}');
+      log('Add Overtime Absen Response: ${addOvertimeResponse.response.statusCode} - ${addOvertimeResponse.data.toJson()}');
       if (addOvertimeResponse.response.statusCode == 201) {
         final result = addOvertimeResponse.data;
+        await addOvertimeCalculate(
+          token: token,
+          date: parsedDate.toApiFormattedDate(),
+          overtimeHours: double.parse(hoursController.text),
+          dayType: selectedDayType!.id,
+        );
         success(result.message);
       } else {
         final result = addOvertimeResponse.data;
@@ -158,9 +154,15 @@ class AbsenViewModel extends BaseViewModel {
         bearerToken: 'Bearer $token',
         request: addOvertimeRequest,
       );
-      log('Login Response: ${addOvertimeResponse.response.statusCode} - ${addOvertimeResponse.data.toJson()}');
+      log('Add Overtime Not Absen Response: ${addOvertimeResponse.response.statusCode} - ${addOvertimeResponse.data.toJson()}');
       if (addOvertimeResponse.response.statusCode == 201) {
         final result = addOvertimeResponse.data;
+        await addOvertimeCalculate(
+          token: token,
+          date: DateTime.now().toApiFormattedDate(),
+          overtimeHours: 0.toDouble(),
+          dayType: 'regular',
+        );
         success(result.message);
       } else {
         final result = addOvertimeResponse.data;
@@ -171,6 +173,44 @@ class AbsenViewModel extends BaseViewModel {
         error('A server error occurred. Please try again later.');
       } else {
         error(e.response?.data['message'] ?? 'An error occurred.');
+      }
+    }
+    setBusy(false);
+  }
+
+  Future<void> addOvertimeCalculate({
+    required String token,
+    required String date,
+    required double overtimeHours,
+    required String dayType,
+  }) async {
+    setBusy(true);
+    try {
+      final AddCalculateRequest addCalculateRequest = AddCalculateRequest(
+        date: date,
+        monthlySalary: salary,
+        dayType: dayType,
+        workingDays: workingDays,
+        overtimeHours: overtimeHours,
+      );
+      log('Request Data: ${addCalculateRequest.toJson()}');
+      final HttpResponse<AddCalculateResponse> addCalculateResponse = await overtimeApi.addCalculate(
+        bearerToken: 'Bearer $token',
+        request: addCalculateRequest,
+      );
+      log('Add Calculate Response: ${addCalculateResponse.response.statusCode} - ${addCalculateResponse.data.toJson()}');
+      if (addCalculateResponse.response.statusCode == 200) {
+        final result = addCalculateResponse.data;
+        log(result.message);
+      } else {
+        final result = addCalculateResponse.data;
+        log(result.message);
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 500) {
+        log('A server error occurred. Please try again later.');
+      } else {
+        log(e.response?.data['message'] ?? 'An error occurred.');
       }
     }
     setBusy(false);

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:overtime_connect_app/core/api/auth_api.dart';
 import 'package:overtime_connect_app/core/api/overtime_api.dart';
+import 'package:overtime_connect_app/core/models/get_calculate_model.dart';
 import 'package:overtime_connect_app/core/models/report_model.dart';
 import 'package:overtime_connect_app/core/models/user_model.dart';
 import 'package:overtime_connect_app/core/services/pref_service.dart';
@@ -23,6 +24,7 @@ class DetailHistoryViewModel extends BaseViewModel {
   final String detailYear;
 
   ReportResponse? report;
+  GetCalculateResponse? calculate;
   String? month;
   String? year;
   double? salary;
@@ -35,6 +37,7 @@ class DetailHistoryViewModel extends BaseViewModel {
     super.initModel();
     await getUser();
     await getReport();
+    // await getCalculate();
     setBusy(false);
   }
 
@@ -105,4 +108,29 @@ class DetailHistoryViewModel extends BaseViewModel {
     }
     setBusy(false);
   }
+
+  // Future<void> getCalculate() async {
+  //   setBusy(true);
+  //   try {
+  //     final String token = await PrefService.getToken() ?? '';
+  //     final HttpResponse<GetCalculateResponse> calculateResponse = await overtimeApi.getCalculate(
+  //       bearerToken: 'Bearer $token',
+  //     );
+  //     log('Get Report Response: ${calculateResponse.response.statusCode} - ${calculateResponse.data.toJson()}');
+  //     if (calculateResponse.response.statusCode == 200) {
+  //       calculate = calculateResponse.data;
+  //       notifyListeners();
+  //     } else {
+  //       final result = calculateResponse.data;
+  //       log('Error: ${result.message}');
+  //     }
+  //   } on DioException catch (e) {
+  //     if (e.response?.statusCode == 500) {
+  //       log('Server error: A server error occurred. Please try again later.');
+  //     } else {
+  //       log('API Error: ${e.response?.data['message'] ?? 'An error occurred.'}');
+  //     }
+  //   }
+  //   setBusy(false);
+  // }
 }

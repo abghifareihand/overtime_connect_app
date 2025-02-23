@@ -127,11 +127,15 @@ class RegisterViewModel extends BaseViewModel {
         await PrefService.saveToken(result.token);
         success(result.message);
       } else {
-        final errorMessage = registerResponse.response.data['message'];
-        error(errorMessage);
+        final result = registerResponse.data;
+        error(result.message);
       }
     } on DioException catch (e) {
-      log('Register error $e');
+      if (e.response?.statusCode == 500) {
+        error('A server error occurred. Please try again later.');
+      } else {
+        error(e.response?.data['message'] ?? 'An error occurred.');
+      }
     }
     setBusy(false);
   }

@@ -7,6 +7,7 @@ import 'package:overtime_connect_app/core/models/api_model.dart';
 import 'package:overtime_connect_app/core/models/update_email_model.dart';
 import 'package:overtime_connect_app/core/models/update_password_model.dart';
 import 'package:overtime_connect_app/core/models/update_profile_model.dart';
+import 'package:overtime_connect_app/core/models/update_salary_model.dart';
 import 'package:overtime_connect_app/core/models/user_model.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -45,6 +46,12 @@ abstract class AuthApi {
   Future<HttpResponse<UpdateEmailResponse>> updateEmail({
     @Header('Authorization') required String bearerToken,
     @Body() required UpdateEmailRequest request,
+  });
+
+  @POST('/api/user/salary')
+  Future<HttpResponse<UpdateSalaryResponse>> updateSalary({
+    @Header('Authorization') required String bearerToken,
+    @Body() required UpdateSalaryRequest request,
   });
 
   @POST('/api/user/password')

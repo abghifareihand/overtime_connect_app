@@ -6,6 +6,7 @@ import 'package:overtime_connect_app/features/menu/history/widgets/select_year_d
 import 'package:overtime_connect_app/features/menu/history/widgets/year_report_widget.dart';
 import 'package:overtime_connect_app/ui/components/custom_header.dart';
 import 'package:overtime_connect_app/ui/shared/app_color.dart';
+import 'package:overtime_connect_app/ui/shared/app_font.dart';
 import 'package:overtime_connect_app/ui/utils/extensions.dart';
 import 'package:provider/provider.dart';
 
@@ -46,16 +47,36 @@ Widget _buildBody(BuildContext context, HistoryViewModel model) {
         const SizedBox(
           height: 16.0,
         ),
-        SelectYearDropdown(
-          value: model.selectedYears ?? (model.overtimeYears?.years.isNotEmpty == true ? model.overtimeYears!.years.last : null),
-          items: model.overtimeYears?.years.toList() ?? [],
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              model.updateSelectedYear(newValue);
-              model.getReportYearly();
-            }
-          },
-        ),
+        model.overtimeYears!.years.isNotEmpty
+            ? SelectYearDropdown(
+                value: model.selectedYears ?? model.overtimeYears!.years.last,
+                items: model.overtimeYears?.years.toList() ?? [],
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    model.updateSelectedYear(newValue);
+                    model.getReportYearly();
+                  }
+                },
+              )
+            : Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 40.0,
+                      ),
+                      Text(
+                        'Belum ada data lembur',
+                        style: AppFont.medium.copyWith(
+                          color: AppColor.gray,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
         // get data report yearly after selectYearDropdown
         Expanded(

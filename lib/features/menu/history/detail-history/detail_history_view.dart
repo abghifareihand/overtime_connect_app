@@ -43,7 +43,7 @@ class DetailHistoryView extends StatelessWidget {
 Widget _buildBody(BuildContext context, DetailHistoryViewModel model) {
   return CustomScaffold(
     title: 'Detail History',
-    subtitle: 'Detail history pada bulan',
+    subtitle: '',
     child: Column(
       children: [
         CustomTabbar(

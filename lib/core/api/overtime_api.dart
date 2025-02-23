@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:overtime_connect_app/core/models/calculate_model.dart';
+import 'package:overtime_connect_app/core/models/get_calculate_model.dart';
 import 'package:overtime_connect_app/core/models/overtime_model.dart';
 import 'package:overtime_connect_app/core/models/overtime_years_model.dart';
 import 'package:overtime_connect_app/core/models/report_model.dart';
@@ -47,5 +49,22 @@ abstract class OvertimeApi {
   Future<HttpResponse<ReportYearlyResponse>> getReportYearly({
     @Header('Authorization') required String bearerToken,
     @Query('year') String? year,
+  });
+
+  @POST('/api/calculate')
+  Future<HttpResponse<AddCalculateResponse>> addCalculate({
+    @Header('Authorization') required String bearerToken,
+    @Body() required AddCalculateRequest request,
+  });
+
+  @GET('/api/calculate')
+  Future<HttpResponse<GetCalculateResponse>> getCalculate({
+    @Header('Authorization') required String bearerToken,
+  });
+
+  @GET('/api/calculate/{id}')
+  Future<HttpResponse<GetCalculateDetailResponse>> getCalculateDetail({
+    @Header('Authorization') required String bearerToken,
+    @Path('id') required int id,
   });
 }
