@@ -1,7 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:overtime_connect_app/core/models/calculate_overtime_model.dart';
 
 part 'overtime_model.g.dart';
 
+// Ensure OvertimeDetail is the same across models
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AddOvertimeRequest {
   AddOvertimeRequest({
@@ -9,7 +11,8 @@ class AddOvertimeRequest {
     required this.overtimeHours,
     required this.totalOvertime,
     required this.status,
-    required this.dayType, // Tambahkan dayType yang nullable
+    required this.dayType,
+    required this.overtimeDetails, // New field for overtime details
   });
 
   factory AddOvertimeRequest.fromJson(Map<String, dynamic> json) => _$AddOvertimeRequestFromJson(json);
@@ -20,7 +23,8 @@ class AddOvertimeRequest {
   final double overtimeHours;
   final double totalOvertime;
   final int status;
-  final String dayType; // Nullable dayType
+  final String dayType;
+  final List<OvertimeDetail> overtimeDetails; // Use consistent OvertimeDetail
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -51,7 +55,7 @@ class OvertimeData {
     required this.updatedAt,
     required this.createdAt,
     required this.id,
-    required this.dayType, // Tambahkan dayType yang nullable
+    required this.dayType,
   });
 
   factory OvertimeData.fromJson(Map<String, dynamic> json) => _$OvertimeDataFromJson(json);
@@ -66,5 +70,5 @@ class OvertimeData {
   final String updatedAt;
   final String createdAt;
   final int id;
-  final String dayType; // Nullable dayType
+  final String dayType;
 }

@@ -10,6 +10,7 @@ class CustomDropdown extends StatelessWidget {
   final String hintText;
   final bool showLabel;
   final Function(String? value)? onChanged;
+  final bool enabled;
 
   const CustomDropdown({
     super.key,
@@ -20,6 +21,7 @@ class CustomDropdown extends StatelessWidget {
     required this.hintText,
     this.onChanged,
     this.showLabel = true,
+    this.enabled = true,
   });
 
   @override
@@ -45,7 +47,7 @@ class CustomDropdown extends StatelessWidget {
           ),
           dropdownColor: AppColor.white,
           value: items.contains(value) ? value : null,
-          onChanged: onChanged,
+          onChanged: enabled ? onChanged : null,
 
           // atur text sebelum user pilih dropdown
           hint: Text(

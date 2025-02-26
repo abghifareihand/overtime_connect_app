@@ -13,6 +13,9 @@ AddOvertimeRequest _$AddOvertimeRequestFromJson(Map<String, dynamic> json) =>
       totalOvertime: (json['total_overtime'] as num).toDouble(),
       status: (json['status'] as num).toInt(),
       dayType: json['day_type'] as String,
+      overtimeDetails: (json['overtime_details'] as List<dynamic>)
+          .map((e) => OvertimeDetail.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$AddOvertimeRequestToJson(AddOvertimeRequest instance) =>
@@ -22,6 +25,7 @@ Map<String, dynamic> _$AddOvertimeRequestToJson(AddOvertimeRequest instance) =>
       'total_overtime': instance.totalOvertime,
       'status': instance.status,
       'day_type': instance.dayType,
+      'overtime_details': instance.overtimeDetails,
     };
 
 AddOvertimeResponse _$AddOvertimeResponseFromJson(Map<String, dynamic> json) =>

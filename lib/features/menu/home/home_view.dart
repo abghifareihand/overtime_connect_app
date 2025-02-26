@@ -36,6 +36,7 @@ class HomeView extends StatelessWidget {
 
 Widget _buildFloating(BuildContext context, HomeViewModel model) {
   return FloatingActionButton(
+    elevation: 2,
     shape: CircleBorder(),
     backgroundColor: AppColor.secondary,
     onPressed: () {

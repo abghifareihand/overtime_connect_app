@@ -60,6 +60,7 @@ class ReportChartWidget extends StatelessWidget {
               majorTickLines: MajorTickLines(
                 width: 0,
               ),
+              interval: 0.5,
             ),
             series: [
               SplineSeries<ChartData, String>(
@@ -84,7 +85,7 @@ class ReportChartWidget extends StatelessWidget {
 
 class ChartData {
   final String day;
-  final int overtimeHours;
+  final double overtimeHours;
 
   ChartData(
     this.day,

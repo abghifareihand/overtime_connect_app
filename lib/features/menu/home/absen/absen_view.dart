@@ -90,6 +90,7 @@ Widget _buildTabMasuk(BuildContext context, AbsenViewModel model, double salary,
               model.updateDayType(selected); // Simpan ID yang dipilih
             }
           },
+          enabled: model.dateAbsentController.text.isNotEmpty,
         ),
         const SizedBox(
           height: 16.0,
@@ -98,6 +99,7 @@ Widget _buildTabMasuk(BuildContext context, AbsenViewModel model, double salary,
           controller: model.hoursController,
           label: 'Jam Lembur',
           onChanged: model.updateHours,
+          readOnly: model.selectedDayType == null,
         ),
         const SizedBox(
           height: 24.0,
@@ -109,18 +111,12 @@ Widget _buildTabMasuk(BuildContext context, AbsenViewModel model, double salary,
             fontSize: 12,
           ),
         ),
-        const SizedBox(
-          height: 12.0,
-        ),
+        const SizedBox(height: 12.0),
         CalculateCard(
           date: model.dateAbsentController.text,
           absen: 'Masuk',
-          hours: double.tryParse(model.hoursController.text),
-          total: (double.tryParse(model.hoursController.text) ?? 0).calculateOvertime(
-            salary,
-            model.selectedDayType?.id ?? '',
-            workingDays,
-          ),
+          hours: double.tryParse(model.hoursController.text) ?? 0.0,
+          totalOvertime: model.calculate?.totalOvertime,
           onPressed: model.isFormValidAbsent
               ? () {
                   showLoadingDialog(context);
@@ -146,9 +142,7 @@ Widget _buildTabMasuk(BuildContext context, AbsenViewModel model, double salary,
                 }
               : null,
         ),
-        const SizedBox(
-          height: 20.0,
-        ),
+        const SizedBox(height: 20.0),
       ],
     ),
   );
@@ -165,10 +159,10 @@ Widget _buildTabTidakMasuk(
           date: DateTime.now().toFormattedDate(),
           absen: 'Tidak Masuk',
           hours: 0,
-          total: 0,
+          totalOvertime: 0,
           onPressed: () {
             showLoadingDialog(context);
-            model.addOvertimeNotPresent(
+            model.addOvertimeNotAbsent(
               success: (message) {
                 hideLoadingDialog(context);
                 Navigator.pushAndRemoveUntil(

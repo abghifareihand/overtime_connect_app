@@ -68,59 +68,67 @@ class _CustomTextfieldLabelState extends State<CustomTextfieldLabel> {
           ),
         ),
         const SizedBox(height: 6.0),
-        TextFormField(
-          cursorColor: AppColor.primary,
-          style: AppFont.semiBold.copyWith(
-            color: AppColor.black,
-            fontSize: 12,
+        Theme(
+          data: Theme.of(context).copyWith(
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: AppColor.primary, // Warna kursor
+              selectionColor: AppColor.primary.withValues(alpha: 0.2), // Warna highlight
+              selectionHandleColor: AppColor.primary, // Warna handle (ujung selection)
+            ),
           ),
-          textCapitalization: widget.textCapitalization,
-          controller: widget.controller,
-          onChanged: widget.onChanged,
-          keyboardType: widget.keyboardType,
-          textInputAction: widget.textInputAction,
-          readOnly: widget.readOnly,
-          maxLines: widget.maxLines,
-          obscureText: widget.obscureText ? _obscureText : false,
-          decoration: InputDecoration(
-            hintStyle: AppFont.medium.copyWith(
-              color: AppColor.gray,
+          child: TextFormField(
+            style: AppFont.semiBold.copyWith(
+              color: AppColor.black,
               fontSize: 12,
             ),
-            prefixIcon: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: widget.prefixIcon,
-            ),
-            suffixIcon: widget.obscureText
-                ? IconButton(
-                    icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: AppColor.primary,
-                    ),
-                    onPressed: _toggleObscureText,
-                  )
-                : widget.suffixIcon,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: const BorderSide(
-                color: AppColor.secondary,
+            textCapitalization: widget.textCapitalization,
+            controller: widget.controller,
+            onChanged: widget.onChanged,
+            keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
+            readOnly: widget.readOnly,
+            maxLines: widget.maxLines,
+            obscureText: widget.obscureText ? _obscureText : false,
+            decoration: InputDecoration(
+              hintStyle: AppFont.medium.copyWith(
+                color: AppColor.gray,
+                fontSize: 12,
               ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: const BorderSide(
-                color: AppColor.secondary,
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: widget.prefixIcon,
               ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: const BorderSide(
-                color: AppColor.secondary,
+              suffixIcon: widget.obscureText
+                  ? IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                        color: AppColor.primary,
+                      ),
+                      onPressed: _toggleObscureText,
+                    )
+                  : widget.suffixIcon,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                borderSide: const BorderSide(
+                  color: AppColor.secondary,
+                ),
               ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                borderSide: const BorderSide(
+                  color: AppColor.secondary,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                borderSide: const BorderSide(
+                  color: AppColor.secondary,
+                ),
+              ),
+              contentPadding: EdgeInsets.all(10),
+              hintText: widget.hintText,
+              helperText: widget.helperText,
             ),
-            contentPadding: EdgeInsets.all(10),
-            hintText: widget.hintText,
-            helperText: widget.helperText,
           ),
         ),
       ],

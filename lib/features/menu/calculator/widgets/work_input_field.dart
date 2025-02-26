@@ -31,47 +31,56 @@ class WorkInputField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6.0),
-        TextFormField(
-          cursorColor: AppColor.primary,
-          controller: controller,
-          onChanged: onChanged,
-          style: AppFont.medium.copyWith(
-            color: AppColor.black,
-            fontSize: 12,
+        Theme(
+          data: Theme.of(context).copyWith(
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: AppColor.primary, // Warna kursor
+              selectionColor: AppColor.primary.withValues(alpha: 0.2), // Warna highlight
+              selectionHandleColor: AppColor.primary, // Warna handle (ujung selection)
+            ),
           ),
-          keyboardType: TextInputType.number,
-          inputFormatters: [DoubleInputFormatter()],
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColor.secondary),
+          child: TextFormField(
+            cursorColor: AppColor.primary,
+            controller: controller,
+            onChanged: onChanged,
+            style: AppFont.medium.copyWith(
+              color: AppColor.black,
+              fontSize: 12,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColor.secondary),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColor.secondary),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 14,
-            ),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: Text(
-                suffixText,
-                style: AppFont.medium.copyWith(
-                  color: AppColor.black,
-                  fontSize: 12,
+            keyboardType: TextInputType.number,
+            inputFormatters: [DoubleInputFormatter()],
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: AppColor.secondary),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: AppColor.secondary),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: AppColor.secondary),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 14,
+              ),
+              suffixIcon: Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Text(
+                  suffixText,
+                  style: AppFont.medium.copyWith(
+                    color: AppColor.black,
+                    fontSize: 12,
+                  ),
                 ),
               ),
-            ),
-            hintText: hintText,
-            hintStyle: AppFont.medium.copyWith(
-              color: AppColor.gray,
-              fontSize: 12,
+              hintText: hintText,
+              hintStyle: AppFont.medium.copyWith(
+                color: AppColor.gray,
+                fontSize: 12,
+              ),
             ),
           ),
         ),

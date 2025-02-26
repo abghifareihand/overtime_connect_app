@@ -52,7 +52,6 @@ class OvertimeCardWidget extends StatelessWidget {
               child: Center(
                 child: Text(
                   report.date.toFormattedDateIndo(),
-                  // 'tested tanggal',
                   style: AppFont.medium.copyWith(
                     color: AppColor.white,
                     fontSize: 16,
@@ -72,8 +71,11 @@ class OvertimeCardWidget extends StatelessWidget {
             _calculateTile(
               icon: Assets.svg.icTime.svg(),
               title: 'Jumlah Lembur',
-              value: '${report.overtimeHours} Jam',
+              value: report.overtimeHours % 1 == 0
+                  ? '${report.overtimeHours.toInt()} Jam' // Menampilkan angka bulat tanpa desimal
+                  : '${report.overtimeHours} Jam', // Menampilkan angka dengan 1 desimal jika tidak bulat
             ),
+
             _calculateDivider(),
 
             // Total Section

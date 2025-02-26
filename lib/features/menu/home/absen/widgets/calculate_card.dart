@@ -8,22 +8,22 @@ import 'package:overtime_connect_app/ui/utils/extensions.dart';
 class CalculateCard extends StatelessWidget {
   final String absen;
   final String date;
-  final double? hours;
-  final double total;
-  // final bool isFormValid;
+  final double hours;
   final Function()? onPressed;
+  final double? totalOvertime;
   const CalculateCard({
     super.key,
     required this.absen,
     required this.date,
     required this.hours,
-    required this.total,
     required this.onPressed,
-    // required this.isFormValid,
+    this.totalOvertime,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Pastikan jika hours kosong atau 0, total menjadi 0
+    final displayTotal = (hours > 0) ? (totalOvertime != null ? totalOvertime!.toCurrency() : 0.toCurrency()) : 0.toCurrency(); // Jika hours 0 atau kosong, tampilkan 0
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -44,7 +44,7 @@ class CalculateCard extends StatelessWidget {
           _calculateTile(
             icon: Assets.svg.icCalender.svg(),
             title: 'Tanggal',
-            value: date.isEmpty ? '-' : date,
+            value: date.isNotEmpty ? date : 'Belum pilih tanggal',
           ),
           _calculateDivider(),
           _calculateTile(
@@ -56,8 +56,13 @@ class CalculateCard extends StatelessWidget {
           _calculateTile(
             icon: Assets.svg.icTime.svg(),
             title: 'Jumlah Lembur',
-            value: hours == null ? '-' : '$hours Jam',
+            value: hours > 0
+                ? (hours % 1 == 0
+                    ? '${hours.toInt()} Jam' // Menampilkan angka bulat tanpa desimal
+                    : '$hours Jam') // Menampilkan angka dengan desimal jika tidak bulat
+                : '0 Jam', // Jika jam 0, tampilkan '0 Jam'
           ),
+
           _calculateDivider(),
 
           // Total Section
@@ -69,7 +74,7 @@ class CalculateCard extends StatelessWidget {
                 style: AppFont.regular.copyWith(color: AppColor.black, fontSize: 14),
               ),
               Text(
-                total.toCurrency(),
+                displayTotal, // Tampilkan "-" jika belum ada perhitungan
                 style: AppFont.bold.copyWith(color: AppColor.primary, fontSize: 16),
               ),
             ],

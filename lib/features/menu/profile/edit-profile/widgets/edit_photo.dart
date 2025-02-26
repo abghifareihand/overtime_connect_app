@@ -45,22 +45,22 @@ class EditPhoto extends StatelessWidget {
           ),
 
           // Overlay Hitam Transparan
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.black.withValues(alpha: 0.3),
-            ),
-          ),
-
-          // Tombol Kamera di Tengah
           GestureDetector(
             onTap: onCameraTap,
-            child: const Icon(
-              Icons.camera_alt,
-              color: Colors.white,
-              size: 24,
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black.withValues(alpha: 0.3), // Efek transparan
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.camera_alt,
+                  color: Colors.white,
+                  size: 24, // Ukuran ikon lebih besar
+                ),
+              ),
             ),
           ),
         ],

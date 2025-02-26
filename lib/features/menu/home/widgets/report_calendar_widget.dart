@@ -3,12 +3,14 @@ import 'package:overtime_connect_app/ui/shared/app_color.dart';
 import 'package:overtime_connect_app/ui/shared/app_font.dart';
 import 'package:overtime_connect_app/ui/utils/extensions.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart'; // Impor DateFormat
 
 class ReportCalendarWidget extends StatelessWidget {
   final bool Function(DateTime) isToday;
   final bool Function(DateTime) hasOvertime;
   final bool Function(DateTime) disableOvertime;
   final String Function(DateTime) overtimeText;
+
   const ReportCalendarWidget({
     super.key,
     required this.isToday,
@@ -26,7 +28,7 @@ class ReportCalendarWidget extends StatelessWidget {
         color: const Color(0xFFF2FAFF),
       ),
       child: TableCalendar(
-        availableGestures: AvailableGestures.none, // enable scrolling
+        availableGestures: AvailableGestures.none, // disable gesture
         headerStyle: HeaderStyle(
           formatButtonVisible: false,
           titleCentered: false,
@@ -38,6 +40,7 @@ class ReportCalendarWidget extends StatelessWidget {
         focusedDay: DateTime.now(),
         firstDay: DateTime.utc(2025, 01, 01),
         lastDay: DateTime.utc(2025, 12, 31),
+        startingDayOfWeek: StartingDayOfWeek.monday,
         calendarStyle: CalendarStyle(
           defaultTextStyle: AppFont.medium.copyWith(
             color: AppColor.black,
@@ -55,6 +58,11 @@ class ReportCalendarWidget extends StatelessWidget {
         calendarBuilders: CalendarBuilders(
           headerTitleBuilder: (context, focusedDay) {
             String monthYear = focusedDay.toMonthYearIndo();
+            List<String> weekDays = List.generate(7, (index) {
+              DateTime day = focusedDay.add(Duration(days: index));
+              return DateFormat('EEE', 'id_ID').format(day);
+            });
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -67,105 +75,34 @@ class ReportCalendarWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: AppColor.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
+                    children: weekDays.map((day) {
+                      return Expanded(
                         child: Center(
                           child: Text(
-                            'Min',
+                            day,
                             style: AppFont.regular.copyWith(
                               color: AppColor.white,
                               fontSize: 12,
                             ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Sen',
-                            style: AppFont.regular.copyWith(
-                              color: AppColor.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Sel',
-                            style: AppFont.regular.copyWith(
-                              color: AppColor.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Rab',
-                            style: AppFont.regular.copyWith(
-                              color: AppColor.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Kam',
-                            style: AppFont.regular.copyWith(
-                              color: AppColor.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Jum',
-                            style: AppFont.regular.copyWith(
-                              color: AppColor.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Sab',
-                            style: AppFont.regular.copyWith(
-                              color: AppColor.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
             );
           },
-
-          // Indikator bulat kecil di bawah tanggal hari ini
           todayBuilder: (context, day, focusedDay) {
             return SizedBox.shrink();
           },
-
           markerBuilder: (context, day, events) {
             bool today = isToday(day);
             bool overtime = hasOvertime(day);
@@ -174,13 +111,13 @@ class ReportCalendarWidget extends StatelessWidget {
 
             if (today && overtime) {
               return Stack(
-                clipBehavior: Clip.none, // Allow the red circle to overflow outside the container
+                clipBehavior: Clip.none,
                 children: [
                   Container(
                     margin: EdgeInsets.all(4),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: AppColor.primary,
+                      color: noneOvertime ? AppColor.gray : AppColor.primary,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -194,24 +131,24 @@ class ReportCalendarWidget extends StatelessWidget {
                             fontSize: 12,
                           ),
                         ),
-                        Text(
-                          '+$title',
-                          style: AppFont.medium.copyWith(
-                            color: Color(0xFF10FA47),
-                            fontSize: 8,
+                        if (!noneOvertime)
+                          Text(
+                            title,
+                            style: AppFont.medium.copyWith(
+                              color: Color(0xFF10FA47),
+                              fontSize: 8,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
                       ],
                     ),
                   ),
-                  // Red circle indicator for today, positioned outside the container
                   Positioned(
-                    top: 2, // Adjust the positioning as needed
-                    right: 2, // Adjust the positioning as needed
+                    top: 2,
+                    right: 2,
                     child: Container(
-                      width: 14,
-                      height: 14,
+                      width: 16,
+                      height: 16,
                       decoration: BoxDecoration(
                         color: Colors.red,
                         shape: BoxShape.circle,
@@ -221,8 +158,8 @@ class ReportCalendarWidget extends StatelessWidget {
                 ],
               );
             }
+
             if (overtime) {
-              // String overtimeText = model.getOvertimeText(day);
               return Container(
                 margin: EdgeInsets.all(4),
                 alignment: Alignment.center,
@@ -243,7 +180,7 @@ class ReportCalendarWidget extends StatelessWidget {
                     ),
                     if (!noneOvertime)
                       Text(
-                        '+$title',
+                        title,
                         style: AppFont.medium.copyWith(
                           color: Color(0xFF10FA47),
                           fontSize: 8,

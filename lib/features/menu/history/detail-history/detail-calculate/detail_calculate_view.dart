@@ -57,7 +57,7 @@ Widget _buildBody(BuildContext context, DetailCalculateViewModel model) {
                 ),
                 child: Center(
                   child: Text(
-                    model.calculateDetail!.data.date.toFormattedDateIndo(),
+                    model.reportDetail!.date.toFormattedDateIndo(),
                     style: AppFont.medium.copyWith(
                       color: AppColor.white,
                       fontSize: 16,
@@ -72,10 +72,10 @@ Widget _buildBody(BuildContext context, DetailCalculateViewModel model) {
                 padding: EdgeInsets.symmetric(vertical: 16),
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: model.calculateDetail!.data.overtimeDetails.length,
+                itemCount: model.reportDetail!.data.length,
                 separatorBuilder: (context, index) => _calculateDivider(),
                 itemBuilder: (context, index) {
-                  final overtime = model.calculateDetail!.data.overtimeDetails[index];
+                  final overtime = model.reportDetail!.data[index];
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -123,7 +123,7 @@ Widget _buildBody(BuildContext context, DetailCalculateViewModel model) {
                     ),
                   ),
                   Text(
-                    model.calculateDetail!.data.totalOvertime.toCurrency(),
+                    model.reportDetail!.totalOvertime.toCurrency(),
                     style: AppFont.bold.copyWith(
                       color: AppColor.primary,
                       fontSize: 16,

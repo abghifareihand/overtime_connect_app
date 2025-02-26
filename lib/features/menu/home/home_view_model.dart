@@ -161,8 +161,9 @@ class HomeViewModel extends BaseViewModel {
 
         // Convert ke List<ChartData>
         weeklyChartData = overtimeByDay.entries.map((entry) {
-          return ChartData(entry.key, entry.value.toInt());
+          return ChartData(entry.key, entry.value); // Biarkan nilai tetap double
         }).toList();
+
         notifyListeners();
       } else {
         log('Error: ${reportResponse.data.status}');

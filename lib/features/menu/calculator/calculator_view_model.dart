@@ -1,12 +1,20 @@
+import 'dart:developer';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:overtime_connect_app/core/api/overtime_api.dart';
+import 'package:overtime_connect_app/core/models/calculate_overtime_model.dart';
 import 'package:overtime_connect_app/core/models/day_type_model.dart';
 import 'package:overtime_connect_app/features/base_view_model.dart';
-import 'package:overtime_connect_app/ui/utils/extensions.dart';
+import 'package:retrofit/retrofit.dart';
 
 class CalculatorViewModel extends BaseViewModel {
+  CalculatorViewModel({
+    required this.overtimeApi,
+  });
   final TextEditingController salaryController = TextEditingController();
   final TextEditingController overtimeController = TextEditingController();
+
   @override
   Future<void> initModel() async {
     setBusy(true);
@@ -21,10 +29,8 @@ class CalculatorViewModel extends BaseViewModel {
     super.disposeModel();
   }
 
-  double? overtimeResult;
-  bool isCalculated = false;
-  List<String> overtimeFormulas = [];
-  List<double> overtimeResults = [];
+  final OvertimeApi overtimeApi;
+  CalculateOvertimeResponse? calculate;
 
   DayType? selectedDayType;
   WorkingDays? selectedWorkingDays;
@@ -70,73 +76,56 @@ class CalculatorViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  // Fungsi untuk reset semua input dan hasil
-  void reset() {
-    salaryController.clear();
-    overtimeController.clear();
-    selectedDayType = null;
-    selectedWorkingDays = null;
-    overtimeResult = null; // Hapus hasil perhitungan
-    isCalculated = false; // Set kembali ke kondisi awal
-    overtimeFormulas.clear(); // Hapus semua rumus
-    overtimeResults.clear(); // Hapus semua hasil
-    notifyListeners();
-  }
-
   void updateDayType(DayType newDayType) {
     selectedDayType = newDayType;
-    resetCalculation();
     notifyListeners();
   }
 
   void updateWorkingDays(WorkingDays newWorkingDays) {
     selectedWorkingDays = newWorkingDays;
-    resetCalculation();
     notifyListeners();
   }
 
-  void resetCalculation() {
-    isCalculated = false;
-    overtimeResult = null;
-    overtimeFormulas.clear();
-    overtimeResults.clear();
+  void resetCalculate() {
+    salaryController.clear();
+    overtimeController.clear();
+    selectedDayType = null;
+    selectedWorkingDays = null;
+    calculate = null;
     notifyListeners();
   }
 
-  void calculateOvertimes() {
-    final double salary = double.parse(salaryController.text.replaceAll(RegExp(r'[^0-9]'), ''));
-    final double hours = double.parse(overtimeController.text);
-
-    // Validasi agar selectedDayType tidak null
-    if (selectedDayType == null) return;
-
-    final String dayType = selectedDayType!.id;
-    final int workingDays = showWorkingDaysDropdown && selectedWorkingDays != null ? int.parse(selectedWorkingDays!.id) : 5; // Default 5 hari kerja jika tidak dipilih
-
-    if (salary > 0 && hours > 0) {
-      overtimeFormulas.clear();
-      overtimeResults.clear();
-
-      // Gunakan ekstensi untuk perhitungan overtime
-      final double totalOvertime = hours.calculateOvertime(salary, dayType, workingDays);
-
-      for (int i = 1; i <= hours; i++) {
-        String formula;
-        double currentOvertime = (i.toDouble()).calculateOvertime(salary, dayType, workingDays) - (i > 1 ? (i - 1).toDouble().calculateOvertime(salary, dayType, workingDays) : 0);
-
-        String formattedSalary = formatCurrency(salary);
-        formula = '$formattedSalary x ${(currentOvertime / (salary / 173)).toStringAsFixed(1)} / 173';
-
-        overtimeFormulas.add(formula);
-        overtimeResults.add(currentOvertime);
+  Future<void> calculateOvertime() async {
+    setBusy(true);
+    try {
+      final double salary = double.parse(salaryController.text.replaceAll(RegExp(r'[^0-9]'), ''));
+      final double hours = double.parse(overtimeController.text);
+      final String dayType = selectedDayType!.id;
+      final int workingDays = showWorkingDaysDropdown && selectedWorkingDays != null ? int.parse(selectedWorkingDays!.id) : 5;
+      final CalculateOvertimeRequest calculateOvertimeRequest = CalculateOvertimeRequest(
+        monthlySalary: salary,
+        dayType: dayType,
+        workingDays: workingDays,
+        overtimeHours: hours,
+      );
+      final HttpResponse<CalculateOvertimeResponse> calculateOvertimeResponse = await overtimeApi.getCalculateOvertime(
+        request: calculateOvertimeRequest,
+      );
+      log('Get Calculate Response: ${calculateOvertimeResponse.response.statusCode} - ${calculateOvertimeResponse.data.overtimeDetails}');
+      if (calculateOvertimeResponse.response.statusCode == 200) {
+        calculate = calculateOvertimeResponse.data;
+        notifyListeners();
+      } else {
+        final result = calculateOvertimeResponse.data;
+        log(result.message);
       }
-
-      overtimeResult = totalOvertime;
-      isCalculated = true;
-    } else {
-      isCalculated = false;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 500) {
+        log('Server error: A server error occurred. Please try again later.');
+      } else {
+        log('API Error: ${e.response?.data['message'] ?? 'An error occurred.'}');
+      }
     }
-
-    notifyListeners();
+    setBusy(false);
   }
 }

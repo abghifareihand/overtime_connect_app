@@ -8,6 +8,7 @@ import 'package:overtime_connect_app/ui/components/custom_button.dart';
 import 'package:overtime_connect_app/ui/components/custom_dropdown.dart';
 import 'package:overtime_connect_app/ui/components/custom_header.dart';
 import 'package:overtime_connect_app/ui/shared/app_color.dart';
+import 'package:provider/provider.dart';
 
 class CalculatorView extends StatelessWidget {
   const CalculatorView({super.key});
@@ -15,7 +16,9 @@ class CalculatorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseView<CalculatorViewModel>(
-      model: CalculatorViewModel(),
+      model: CalculatorViewModel(
+        overtimeApi: Provider.of(context),
+      ),
       onModelReady: (CalculatorViewModel model) => model.initModel(),
       onModelDispose: (CalculatorViewModel model) => model.disposeModel(),
       builder: (BuildContext context, CalculatorViewModel model, _) {
@@ -92,20 +95,18 @@ Widget _buildBody(BuildContext context, CalculatorViewModel model) {
           ),
           Button.filled(
             height: 48,
-            onPressed: model.isFormValid ? model.calculateOvertimes : null,
+            onPressed: model.isFormValid ? model.calculateOvertime : null,
             label: 'Verifikasi',
           ),
           const SizedBox(
             height: 24.0,
           ),
-          if (model.isCalculated && model.overtimeResult != null) ...[
-            CalculateResultWidget(
-              overtimeFormulas: model.overtimeFormulas,
-              overtimeResults: model.overtimeResults,
-              overtimeTotal: model.overtimeResult!,
-              onReset: model.reset,
-            ),
-          ],
+          model.isBusy || model.calculate == null
+              ? SizedBox.shrink()
+              : CalculateResultWidget(
+                  calculateOvertime: model.calculate!,
+                  onReset: model.resetCalculate,
+                ),
         ],
       ),
     ),

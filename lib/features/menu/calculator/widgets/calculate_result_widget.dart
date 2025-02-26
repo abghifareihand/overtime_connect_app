@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:overtime_connect_app/core/models/calculate_overtime_model.dart';
 import 'package:overtime_connect_app/ui/components/custom_button.dart';
 import 'package:overtime_connect_app/ui/shared/app_color.dart';
 import 'package:overtime_connect_app/ui/shared/app_font.dart';
 import 'package:overtime_connect_app/ui/utils/extensions.dart';
 
 class CalculateResultWidget extends StatelessWidget {
-  final List<String> overtimeFormulas;
-  final List<double> overtimeResults;
-  final double overtimeTotal;
+  final CalculateOvertimeResponse calculateOvertime;
   final VoidCallback onReset;
   const CalculateResultWidget({
     super.key,
-    required this.overtimeFormulas,
-    required this.overtimeResults,
-    required this.overtimeTotal,
+    required this.calculateOvertime,
     required this.onReset,
   });
 
@@ -47,44 +44,53 @@ class CalculateResultWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Menampilkan Rumus per Jam Lembur dengan format yang diinginkan
-              for (int i = 0; i < overtimeFormulas.length; i++) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
+                children: [
+                  for (int i = 0; i < calculateOvertime.overtimeDetails.length; i++) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Jam ke-${i + 1}:',
-                          style: AppFont.medium.copyWith(
-                            color: AppColor.black,
-                            fontSize: 12,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Jam ke-${i + 1}',
+                              style: AppFont.medium.copyWith(
+                                color: AppColor.black,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              calculateOvertime.overtimeDetails[i].formula,
+                              style: AppFont.medium.copyWith(
+                                color: AppColor.black,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
                         Text(
-                          overtimeFormulas[i], // Menampilkan rumus
-                          style: AppFont.medium.copyWith(
+                          calculateOvertime.overtimeDetails[i].result.toCurrencyWithoutRp(),
+                          style: AppFont.bold.copyWith(
                             color: AppColor.black,
                             fontSize: 12,
                           ),
                         ),
                       ],
                     ),
-                    Text(
-                      overtimeResults[i].toCurrencyWithoutRp(), // Hasil perhitungan
-                      style: AppFont.bold.copyWith(
-                        color: AppColor.black,
-                        fontSize: 12,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8.0,
+                        bottom: 12,
+                      ),
+                      child: Divider(
+                        height: 1,
+                        color: AppColor.secondary,
                       ),
                     ),
                   ],
-                ),
-
-                const SizedBox(height: 8.0), // Jarak antar rumus
-              ],
-              const SizedBox(height: 30.0),
-              // Menampilkan Total Lembur
+                ],
+              ),
               Container(
                 padding: EdgeInsets.symmetric(
                   vertical: 8,
@@ -105,7 +111,7 @@ class CalculateResultWidget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      overtimeTotal.toCurrencyWithoutRp(),
+                      calculateOvertime.totalOvertime.toCurrencyWithoutRp(),
                       style: AppFont.semiBold.copyWith(
                         color: AppColor.white,
                         fontSize: 16,

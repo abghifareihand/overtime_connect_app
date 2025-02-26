@@ -68,9 +68,12 @@ class DoubleInputFormatter extends TextInputFormatter {
       parts[0] = parts[0].substring(0, 2);
     }
 
-    // Jika ada angka setelah titik, batasi maksimal 2 digit
-    if (parts.length > 1 && parts[1].length > 2) {
-      parts[1] = parts[1].substring(0, 2);
+    // Jika ada angka setelah titik, pastikan hanya bisa 5
+    if (parts.length > 1) {
+      String afterDecimal = parts[1];
+      if (afterDecimal != '5') {
+        parts[1] = ''; // Hapus jika bukan angka 5
+      }
     }
 
     // Gabungkan kembali angka sebelum dan setelah titik
