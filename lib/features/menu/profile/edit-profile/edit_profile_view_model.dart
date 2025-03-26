@@ -19,15 +19,17 @@ class EditProfileViewModel extends BaseViewModel {
     required this.authApi,
   }) {
     fullnameController.text = user.fullname;
+    usernameController.text = user.username;
     phoneController.text = user.phone;
     salaryController.text = user.salary.toCurrency();
     selectedWorkingDays = workingDays.firstWhere(
       (e) => int.tryParse(e.id) == user.workingDays,
-      orElse: () => workingDays.first, // Default ke opsi pertama jika tidak ditemukan
+      orElse: () => workingDays.first,
     );
   }
 
   final TextEditingController fullnameController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController salaryController = TextEditingController();
 
@@ -87,6 +89,7 @@ class EditProfileViewModel extends BaseViewModel {
       final HttpResponse<UpdateProfileResponse> updateProfileResponse = await authApi.updateProfile(
         bearerToken: 'Bearer $token',
         fullname: fullnameController.text,
+        username: usernameController.text,
         phone: phoneController.text,
         workingDays: int.parse(selectedWorkingDays!.id),
         photo: photoProfile,

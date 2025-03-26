@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:overtime_connect_app/core/models/login_model.dart';
 import 'package:overtime_connect_app/core/models/register_model.dart';
 import 'package:overtime_connect_app/core/models/api_model.dart';
+import 'package:overtime_connect_app/core/models/reset_password_model.dart';
 import 'package:overtime_connect_app/core/models/update_email_model.dart';
 import 'package:overtime_connect_app/core/models/update_password_model.dart';
 import 'package:overtime_connect_app/core/models/update_profile_model.dart';
@@ -37,6 +38,7 @@ abstract class AuthApi {
   Future<HttpResponse<UpdateProfileResponse>> updateProfile({
     @Header('Authorization') required String bearerToken,
     @Part(name: 'fullname') required String fullname,
+    @Part(name: 'username') required String username,
     @Part(name: 'phone') required String phone,
     @Part(name: 'working_days') required int workingDays,
     @Part(name: 'photo') File? photo,
@@ -63,5 +65,15 @@ abstract class AuthApi {
   @POST('/api/logout')
   Future<HttpResponse<ApiResponse>> logout({
     @Header('Authorization') required String bearerToken,
+  });
+
+  @POST('/api/request-otp')
+  Future<HttpResponse<ResetOtpResponse>> requestOtp({
+    @Body() required ResetOtpRequest request,
+  });
+
+  @POST('/api/reset-password')
+  Future<HttpResponse<ResetPasswordResponse>> resetPassword({
+    @Body() required ResetPasswordRequest request,
   });
 }

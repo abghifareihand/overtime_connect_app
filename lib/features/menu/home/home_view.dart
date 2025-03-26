@@ -3,6 +3,7 @@ import 'package:overtime_connect_app/features/base_view.dart';
 import 'package:overtime_connect_app/features/menu/home/absen/absen_view.dart';
 import 'package:overtime_connect_app/features/menu/home/home_view_model.dart';
 import 'package:overtime_connect_app/features/menu/home/widgets/report_calendar_widget.dart';
+import 'package:overtime_connect_app/features/menu/home/widgets/report_card_by_id.dart';
 import 'package:overtime_connect_app/features/menu/home/widgets/report_card_widget.dart';
 import 'package:overtime_connect_app/features/menu/home/widgets/report_chart_widget.dart';
 import 'package:overtime_connect_app/features/menu/home/widgets/report_dropdown.dart';
@@ -137,6 +138,7 @@ Widget _buildBody(BuildContext context, HomeViewModel model) {
         const SizedBox(
           height: 120.0,
         ),
+        // Overview
         Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -160,7 +162,8 @@ Widget _buildBody(BuildContext context, HomeViewModel model) {
                 ],
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    model.updateSelectedReport(newValue); // Call to switch view and fetch the respective data
+                    model.updateSelectedReport(
+                        newValue); // Call to switch view and fetch the respective data
                   }
                 },
               ),
@@ -208,6 +211,8 @@ Widget _buildBody(BuildContext context, HomeViewModel model) {
                               hasOvertime: model.hasOvertime,
                               disableOvertime: model.isOvertimeDisabled,
                               overtimeText: model.getOvertimeText,
+                              onPressed: (day) => model.updateSelectedDay(day),
+                              isPressed: (day) => model.selectedDay == day,
                             )
                           : Padding(
                               padding: const EdgeInsets.only(top: 40),
@@ -224,6 +229,14 @@ Widget _buildBody(BuildContext context, HomeViewModel model) {
             ],
           ),
         ),
+
+        // Card Overtime by Id hanya tampil saat bulanan
+        (model.reportById == null
+            ? SizedBox.shrink()
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ReportCardById(report: model.reportById!.data),
+              )),
         const SizedBox(
           height: 80.0,
         ),

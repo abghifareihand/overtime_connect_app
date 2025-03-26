@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:overtime_connect_app/core/assets/assets.gen.dart';
-import 'package:overtime_connect_app/core/models/report_model.dart';
+import 'package:overtime_connect_app/core/models/report_by_id_model.dart';
 import 'package:overtime_connect_app/features/menu/history/detail-history/detail-calculate/detail_calculate_view.dart';
 import 'package:overtime_connect_app/ui/shared/app_color.dart';
 import 'package:overtime_connect_app/ui/shared/app_font.dart';
 import 'package:overtime_connect_app/ui/utils/extensions.dart';
 
-class OvertimeCardWidget extends StatelessWidget {
-  final ReportData report;
-  const OvertimeCardWidget({
+class ReportCardById extends StatelessWidget {
+  final ReportByIdData report;
+  const ReportCardById({
     super.key,
     required this.report,
   });
@@ -65,7 +65,11 @@ class OvertimeCardWidget extends StatelessWidget {
             _calculateTile(
               icon: Assets.svg.icFinger.svg(),
               title: 'Absensi',
-              value: report.status == 1 ? (report.dayType == 'regular' ? 'Masuk Hari Biasa' : (report.dayType == 'holiday' ? 'Masuk Hari Libur' : 'Tidak Masuk')) : 'Tidak Masuk',
+              value: report.status == 1
+                  ? (report.dayType == 'regular'
+                      ? 'Masuk Hari Biasa'
+                      : (report.dayType == 'holiday' ? 'Masuk Hari Libur' : 'Tidak Masuk'))
+                  : 'Tidak Masuk',
             ),
             _calculateDivider(),
             _calculateTile(

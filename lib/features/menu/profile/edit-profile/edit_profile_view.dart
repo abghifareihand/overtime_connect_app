@@ -95,6 +95,15 @@ Widget _buildBody(BuildContext context, EditProfileViewModel model, User user) {
             height: 16.0,
           ),
           CustomTextfieldLabel(
+            controller: model.usernameController,
+            label: 'Username',
+            hintText: 'Username',
+            prefixIcon: Assets.svg.icProfile.svg(),
+          ),
+          const SizedBox(
+            height: 16.0,
+          ),
+          CustomTextfieldLabel(
             controller: model.phoneController,
             keyboardType: TextInputType.phone,
             label: 'Nomor HP',
@@ -153,7 +162,6 @@ Widget _buildBody(BuildContext context, EditProfileViewModel model, User user) {
               model.updateProfile(
                 success: (message) {
                   hideLoadingDialog(context);
-
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => MenuView()),
@@ -172,6 +180,9 @@ Widget _buildBody(BuildContext context, EditProfileViewModel model, User user) {
               );
             },
             label: 'Simpan',
+          ),
+          const SizedBox(
+            height: 20.0,
           ),
         ],
       ),

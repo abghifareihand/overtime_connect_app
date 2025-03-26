@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:overtime_connect_app/core/api/auth_api.dart';
 import 'package:overtime_connect_app/core/api/overtime_api.dart';
+import 'package:overtime_connect_app/core/models/report_by_id_model.dart';
 import 'package:overtime_connect_app/core/models/report_model.dart';
 import 'package:overtime_connect_app/core/models/report_monthly_model.dart';
 import 'package:overtime_connect_app/core/models/report_weekly_model.dart';
@@ -27,10 +28,12 @@ class HomeViewModel extends BaseViewModel {
 
   ReportWeeklyResponse? reportWeekly;
   ReportMonthlyResponse? reportMonthly;
+  ReportByIdResponse? reportById;
   List<ChartData> weeklyChartData = [];
   Map<DateTime, List<ReportMonthlyData>> overtimeData = {};
   String selectedReport = 'Mingguan';
   bool isLoading = true;
+  bool isLoadingReportById = true;
 
   @override
   Future<void> initModel() async {
@@ -49,6 +52,8 @@ class HomeViewModel extends BaseViewModel {
 
   void updateSelectedReport(String newView) {
     selectedReport = newView;
+    reportById = null;
+    selectedDay = null;
     notifyListeners();
 
     // Fetch the corresponding data based on the selected view
@@ -63,6 +68,19 @@ class HomeViewModel extends BaseViewModel {
     selectedReport = 'Mingguan'; // Default to "Mingguan"
     await getReportMonthly();
     await getReportWeekly(); // Fetch weekly data initially
+    notifyListeners();
+  }
+
+  DateTime? selectedDay;
+  void updateSelectedDay(DateTime day) {
+    if (selectedDay == day) {
+      selectedDay = null; // Reset jika sudah dipilih
+      reportById = null;
+    } else {
+      selectedDay = day; // Set tanggal yang baru dipilih
+      final overtimeId = getOvertimeId(day);
+      getReportById(overtimeId);
+    }
     notifyListeners();
   }
 
@@ -195,7 +213,6 @@ class HomeViewModel extends BaseViewModel {
       log('Get Monthly Report Response: ${reportResponse.response.statusCode} - ${reportResponse.data.toJson()}');
       if (reportResponse.response.statusCode == 200) {
         reportMonthly = reportResponse.data;
-
         overtimeData = {};
         for (var report in reportMonthly!.data) {
           final date = DateTime.parse(report.date); // Parsing string menjadi DateTime
@@ -219,9 +236,33 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future<void> getReportById(int reportId) async {
+    try {
+      final String token = await PrefService.getToken() ?? '';
+      final HttpResponse<ReportByIdResponse> reportByIdResponse = await overtimeApi.getReportById(
+        bearerToken: 'Bearer $token',
+        id: reportId,
+      );
+      log('Get Detail Calculate Response: ${reportByIdResponse.response.statusCode} - ${reportByIdResponse.data.toJson()}');
+      if (reportByIdResponse.response.statusCode == 200) {
+        reportById = reportByIdResponse.data;
+        notifyListeners();
+      } else {
+        log('Error get result by id');
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 500) {
+        log('Server error: A server error occurred. Please try again later.');
+      } else {
+        log('API Error: ${e.response?.data['message'] ?? 'An error occurred.'}');
+      }
+    }
+  }
+
   bool hasOvertime(DateTime day) {
     final normalizedDay = DateTime(day.year, day.month, day.day);
-    return overtimeData.containsKey(normalizedDay) && overtimeData[normalizedDay]?.isNotEmpty == true;
+    return overtimeData.containsKey(normalizedDay) &&
+        overtimeData[normalizedDay]?.isNotEmpty == true;
   }
 
   // Fungsi untuk memeriksa apakah lembur berstatus 0 (disable)
@@ -242,7 +283,9 @@ class HomeViewModel extends BaseViewModel {
   }
 
   bool isToday(DateTime day) {
-    return day.year == DateTime.now().year && day.month == DateTime.now().month && day.day == DateTime.now().day;
+    return day.year == DateTime.now().year &&
+        day.month == DateTime.now().month &&
+        day.day == DateTime.now().day;
   }
 
   String getOvertimeText(DateTime day) {
@@ -266,5 +309,15 @@ class HomeViewModel extends BaseViewModel {
     }
 
     return ''; // Tidak ada lembur pada tanggal ini
+  }
+
+  int getOvertimeId(DateTime day) {
+    final normalizedDay = DateTime(day.year, day.month, day.day);
+    var overtimeReports = overtimeData[normalizedDay];
+
+    if (overtimeReports != null && overtimeReports.isNotEmpty) {
+      return overtimeReports.first.id; // Ambil ID pertama tanpa peduli statusnya
+    }
+    return 0; // Jika tidak ada data lembur
   }
 }

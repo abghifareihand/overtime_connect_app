@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:overtime_connect_app/core/models/calculate_overtime_model.dart';
+import 'package:overtime_connect_app/core/models/delete_report_model.dart';
 import 'package:overtime_connect_app/core/models/overtime_model.dart';
 import 'package:overtime_connect_app/core/models/overtime_years_model.dart';
+import 'package:overtime_connect_app/core/models/report_by_id_model.dart';
+import 'package:overtime_connect_app/core/models/report_date_model.dart';
 import 'package:overtime_connect_app/core/models/report_detail_model.dart';
 import 'package:overtime_connect_app/core/models/report_model.dart';
 import 'package:overtime_connect_app/core/models/report_monthly_model.dart';
@@ -49,6 +52,25 @@ abstract class OvertimeApi {
   Future<HttpResponse<ReportYearlyResponse>> getReportYearly({
     @Header('Authorization') required String bearerToken,
     @Query('year') String? year,
+  });
+
+  @GET('/api/overtime-report-date')
+  Future<HttpResponse<ReportDateResponse>> getReportDateRange({
+    @Header('Authorization') required String bearerToken,
+    @Query('start_date') String? startDate,
+    @Query('end_date') String? endDate,
+  });
+
+  @GET('/api/overtime-report/{id}')
+  Future<HttpResponse<ReportByIdResponse>> getReportById({
+    @Header('Authorization') required String bearerToken,
+    @Path('id') required int id,
+  });
+
+  @DELETE('/api/overtime/{id}')
+  Future<HttpResponse<DeleteReportResponse>> deleteReportById({
+    @Header('Authorization') required String bearerToken,
+    @Path('id') required int id,
   });
 
   @GET('/api/overtime-report/{id}/details')

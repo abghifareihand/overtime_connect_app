@@ -3,13 +3,15 @@ import 'package:overtime_connect_app/ui/shared/app_color.dart';
 import 'package:overtime_connect_app/ui/shared/app_font.dart';
 import 'package:overtime_connect_app/ui/utils/extensions.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart'; // Impor DateFormat
+import 'package:intl/intl.dart';
 
 class ReportCalendarWidget extends StatelessWidget {
   final bool Function(DateTime) isToday;
   final bool Function(DateTime) hasOvertime;
   final bool Function(DateTime) disableOvertime;
   final String Function(DateTime) overtimeText;
+  final Function(DateTime day)? onPressed;
+  final bool Function(DateTime) isPressed;
 
   const ReportCalendarWidget({
     super.key,
@@ -17,6 +19,8 @@ class ReportCalendarWidget extends StatelessWidget {
     required this.hasOvertime,
     required this.disableOvertime,
     required this.overtimeText,
+    required this.onPressed,
+    required this.isPressed,
   });
 
   @override
@@ -28,7 +32,7 @@ class ReportCalendarWidget extends StatelessWidget {
         color: const Color(0xFFF2FAFF),
       ),
       child: TableCalendar(
-        availableGestures: AvailableGestures.none, // disable gesture
+        availableGestures: AvailableGestures.none,
         headerStyle: HeaderStyle(
           formatButtonVisible: false,
           titleCentered: false,
@@ -58,10 +62,7 @@ class ReportCalendarWidget extends StatelessWidget {
         calendarBuilders: CalendarBuilders(
           headerTitleBuilder: (context, focusedDay) {
             String monthYear = focusedDay.toMonthYearIndo();
-            List<String> weekDays = List.generate(7, (index) {
-              DateTime day = focusedDay.add(Duration(days: index));
-              return DateFormat('EEE', 'id_ID').format(day);
-            });
+            List<String> weekDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,34 +114,39 @@ class ReportCalendarWidget extends StatelessWidget {
               return Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Container(
-                    margin: EdgeInsets.all(4),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: noneOvertime ? AppColor.gray : AppColor.primary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${day.day}',
-                          style: AppFont.semiBold.copyWith(
-                            color: AppColor.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        if (!noneOvertime)
+                  InkWell(
+                    onTap: () => onPressed?.call(day),
+                    child: Container(
+                      margin: EdgeInsets.all(4),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isPressed(day)
+                            ? AppColor.red
+                            : (noneOvertime ? AppColor.gray : AppColor.primary),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
                           Text(
-                            title,
-                            style: AppFont.medium.copyWith(
-                              color: Color(0xFF10FA47),
-                              fontSize: 8,
+                            '${day.day}',
+                            style: AppFont.semiBold.copyWith(
+                              color: AppColor.white,
+                              fontSize: 12,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                      ],
+                          if (!noneOvertime)
+                            Text(
+                              title,
+                              style: AppFont.medium.copyWith(
+                                color: Color(0xFF10FA47),
+                                fontSize: 8,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                   Positioned(
@@ -160,34 +166,39 @@ class ReportCalendarWidget extends StatelessWidget {
             }
 
             if (overtime) {
-              return Container(
-                margin: EdgeInsets.all(4),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: noneOvertime ? AppColor.gray : AppColor.primary,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${day.day}',
-                      style: AppFont.semiBold.copyWith(
-                        color: AppColor.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                    if (!noneOvertime)
+              return InkWell(
+                onTap: () => onPressed?.call(day),
+                child: Container(
+                  margin: EdgeInsets.all(4),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isPressed(day)
+                        ? AppColor.red
+                        : (noneOvertime ? AppColor.gray : AppColor.primary),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       Text(
-                        title,
-                        style: AppFont.medium.copyWith(
-                          color: Color(0xFF10FA47),
-                          fontSize: 8,
+                        '${day.day}',
+                        style: AppFont.semiBold.copyWith(
+                          color: AppColor.white,
+                          fontSize: 12,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                  ],
+                      if (!noneOvertime)
+                        Text(
+                          title,
+                          style: AppFont.medium.copyWith(
+                            color: Color(0xFF10FA47),
+                            fontSize: 8,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                    ],
+                  ),
                 ),
               );
             }

@@ -5,7 +5,7 @@ part 'login_model.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class LoginRequest {
   LoginRequest({
-    required this.username,
+    required this.login,
     required this.password,
   });
 
@@ -13,7 +13,7 @@ class LoginRequest {
 
   Map<String, dynamic> toJson() => _$LoginRequestToJson(this);
 
-  final String username;
+  final String login;
   final String password;
 }
 

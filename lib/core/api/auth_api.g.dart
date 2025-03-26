@@ -114,6 +114,7 @@ class _AuthApi implements AuthApi {
   Future<HttpResponse<UpdateProfileResponse>> updateProfile({
     required String bearerToken,
     required String fullname,
+    required String username,
     required String phone,
     required int workingDays,
     File? photo,
@@ -125,18 +126,21 @@ class _AuthApi implements AuthApi {
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.fields.add(MapEntry('fullname', fullname));
+    _data.fields.add(MapEntry('username', username));
     _data.fields.add(MapEntry('phone', phone));
     _data.fields.add(MapEntry('working_days', workingDays.toString()));
     if (photo != null) {
-      _data.files.add(
-        MapEntry(
-          'photo',
-          MultipartFile.fromFileSync(
-            photo.path,
-            filename: photo.path.split(Platform.pathSeparator).last,
+      if (photo != null) {
+        _data.files.add(
+          MapEntry(
+            'photo',
+            MultipartFile.fromFileSync(
+              photo.path,
+              filename: photo.path.split(Platform.pathSeparator).last,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
     final _options = _setStreamType<HttpResponse<UpdateProfileResponse>>(
       Options(
@@ -295,8 +299,72 @@ class _AuthApi implements AuthApi {
     return httpResponse;
   }
 
+  @override
+  Future<HttpResponse<ResetOtpResponse>> requestOtp({
+    required ResetOtpRequest request,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<HttpResponse<ResetOtpResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/request-otp',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ResetOtpResponse _value;
+    try {
+      _value = ResetOtpResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<ResetPasswordResponse>> resetPassword({
+    required ResetPasswordRequest request,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<HttpResponse<ResetPasswordResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/reset-password',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ResetPasswordResponse _value;
+    try {
+      _value = ResetPasswordResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
-    if (T != dynamic && !(requestOptions.responseType == ResponseType.bytes || requestOptions.responseType == ResponseType.stream)) {
+    if (T != dynamic &&
+        !(requestOptions.responseType == ResponseType.bytes ||
+            requestOptions.responseType == ResponseType.stream)) {
       if (T == String) {
         requestOptions.responseType = ResponseType.plain;
       } else {

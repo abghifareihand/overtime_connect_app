@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:overtime_connect_app/core/assets/assets.gen.dart';
+import 'package:overtime_connect_app/features/auth/forgot-password/forgot_password_view.dart';
 import 'package:overtime_connect_app/features/auth/login/login_view_model.dart';
 import 'package:overtime_connect_app/features/base_view.dart';
 import 'package:overtime_connect_app/features/menu/menu_view.dart';
@@ -88,8 +89,8 @@ Widget _buildBody(BuildContext context, LoginViewModel model) {
               height: 32.0,
             ),
             CustomTextfield(
-              controller: model.usernameController,
-              hintText: 'Nama Pengguna',
+              controller: model.usernameoremailController,
+              hintText: 'Username atau Email',
               prefixIcon: Icon(
                 Icons.person,
                 color: AppColor.primary,
@@ -113,18 +114,43 @@ Widget _buildBody(BuildContext context, LoginViewModel model) {
               height: 26.0,
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomCheckbox(
-                  value: model.isCheckbox,
-                  onChanged: model.toggleCheckbox,
-                  title: 'Ingatkan saya',
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomCheckbox(
+                      value: model.isCheckbox,
+                      onChanged: model.toggleCheckbox,
+                      title: 'Ingatkan saya',
+                    ),
+                    if (model.isCheckbox) ...[
+                      SizedBox(height: 4),
+                      Text(
+                        '*Simpan username dan password',
+                        style: AppFont.regular.copyWith(
+                          color: AppColor.red,
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                Text(
-                  'Lupa Kata Sandi?',
-                  style: AppFont.regular.copyWith(
-                    color: AppColor.black,
-                    fontSize: 12,
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ForgotPasswordView(),
+                    ),
+                  ),
+                  child: Text(
+                    'Lupa Kata Sandi?',
+                    style: AppFont.regular.copyWith(
+                      color: AppColor.black,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],
@@ -160,9 +186,38 @@ Widget _buildBody(BuildContext context, LoginViewModel model) {
                   : null,
               label: 'Masuk',
             ),
+            _buildRegisterSection(context),
           ],
         ),
       ),
     ],
+  );
+}
+
+Widget _buildRegisterSection(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 8),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          'Belum punya akun? ',
+          style: AppFont.regular.copyWith(
+            color: AppColor.black,
+            fontSize: 12,
+          ),
+        ),
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Text(
+            'Daftar',
+            style: AppFont.semiBold.copyWith(
+              color: AppColor.primary,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }

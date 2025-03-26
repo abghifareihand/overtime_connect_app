@@ -223,9 +223,38 @@ Widget _buildBody(BuildContext context, RegisterViewModel model) {
                   : null,
               label: 'Buat Akun',
             ),
+            _buildLoginSection(context),
           ],
         ),
       ),
     ],
+  );
+}
+
+Widget _buildLoginSection(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 8),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          'Sudah punya akun? ',
+          style: AppFont.regular.copyWith(
+            color: AppColor.black,
+            fontSize: 12,
+          ),
+        ),
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Text(
+            'Login',
+            style: AppFont.semiBold.copyWith(
+              color: AppColor.primary,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }

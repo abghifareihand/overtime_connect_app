@@ -12,7 +12,7 @@ class LoginViewModel extends BaseViewModel {
   LoginViewModel({
     required this.authApi,
   });
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController usernameoremailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isCheckbox = false;
 
@@ -22,18 +22,19 @@ class LoginViewModel extends BaseViewModel {
   Future<void> initModel() async {
     setBusy(true);
     super.initModel();
+    await getInit();
     setBusy(false);
   }
 
   @override
   Future<void> disposeModel() async {
-    usernameController.dispose();
+    usernameoremailController.dispose();
     passwordController.dispose();
     super.disposeModel();
   }
 
   bool get isFormValid {
-    return isCheckbox && usernameController.text.isNotEmpty && passwordController.text.isNotEmpty;
+    return usernameoremailController.text.isNotEmpty && passwordController.text.isNotEmpty;
   }
 
   void toggleCheckbox(bool value) {
@@ -42,13 +43,25 @@ class LoginViewModel extends BaseViewModel {
   }
 
   void updateUsername(String value) {
-    usernameController.text = value;
+    usernameoremailController.text = value;
     notifyListeners();
   }
 
   void updatePassword(String value) {
     passwordController.text = value;
     notifyListeners();
+  }
+
+  // Fungsi terpisah untuk mendapatkan data dari SharedPreferences
+  Future<void> getInit() async {
+    final savedUsername = await PrefService.getUsername();
+    final savedPassword = await PrefService.getPassword();
+    if (savedUsername != null) {
+      usernameoremailController.text = savedUsername;
+    }
+    if (savedPassword != null) {
+      passwordController.text = savedPassword;
+    }
   }
 
   Future<void> login({
@@ -58,7 +71,7 @@ class LoginViewModel extends BaseViewModel {
     setBusy(true);
     try {
       final LoginRequest loginRequest = LoginRequest(
-        username: usernameController.text,
+        login: usernameoremailController.text,
         password: passwordController.text,
       );
       final HttpResponse<LoginResponse> loginResponse = await authApi.login(
@@ -68,6 +81,11 @@ class LoginViewModel extends BaseViewModel {
       if (loginResponse.response.statusCode == 200) {
         final result = loginResponse.data;
         await PrefService.saveToken(result.token);
+        // Simpan username dan password hanya jika checkbox dicentang
+        if (isCheckbox) {
+          await PrefService.saveUsername(usernameoremailController.text);
+          await PrefService.savePassword(passwordController.text);
+        }
         success(result.message);
       } else {
         final result = loginResponse.data;

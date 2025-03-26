@@ -5,12 +5,14 @@ import 'package:overtime_connect_app/ui/utils/extensions.dart';
 
 class SalaryCardWidget extends StatelessWidget {
   final double salary;
-  final double overtime;
+  final double overtimeHours;
+  final double overtimeTotal;
   final double total;
   const SalaryCardWidget({
     super.key,
     required this.salary,
-    required this.overtime,
+    required this.overtimeHours,
+    required this.overtimeTotal,
     required this.total,
   });
 
@@ -37,9 +39,14 @@ class SalaryCardWidget extends StatelessWidget {
             value: salary,
           ),
           _salaryDivider(),
+          _hoursTile(
+            title: 'Jam Lembur',
+            value: overtimeHours,
+          ),
+          _salaryDivider(),
           _salaryTile(
             title: 'Jumlah Lemburan',
-            value: overtime,
+            value: overtimeTotal,
           ),
           _salaryDivider(),
           Container(
@@ -107,6 +114,34 @@ Widget _salaryTile({
       const SizedBox(height: 4.0),
       Text(
         value.toCurrency(),
+        style: AppFont.bold.copyWith(
+          color: AppColor.black,
+          fontSize: 12,
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _hoursTile({
+  required String title,
+  required double value,
+}) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        title,
+        style: AppFont.regular.copyWith(
+          color: AppColor.black,
+          fontSize: 12,
+        ),
+      ),
+      const SizedBox(height: 4.0),
+      Text(
+        value % 1 == 0
+            ? '${value.toInt()} Jam' // Menampilkan angka bulat tanpa desimal
+            : '$value Jam', // Menampilkan angka dengan 1 desimal jika tidak bulat,
         style: AppFont.bold.copyWith(
           color: AppColor.black,
           fontSize: 12,
