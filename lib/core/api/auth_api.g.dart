@@ -130,17 +130,15 @@ class _AuthApi implements AuthApi {
     _data.fields.add(MapEntry('phone', phone));
     _data.fields.add(MapEntry('working_days', workingDays.toString()));
     if (photo != null) {
-      if (photo != null) {
-        _data.files.add(
-          MapEntry(
-            'photo',
-            MultipartFile.fromFileSync(
-              photo.path,
-              filename: photo.path.split(Platform.pathSeparator).last,
-            ),
+      _data.files.add(
+        MapEntry(
+          'photo',
+          MultipartFile.fromFileSync(
+            photo.path,
+            filename: photo.path.split(Platform.pathSeparator).last,
           ),
-        );
-      }
+        ),
+      );
     }
     final _options = _setStreamType<HttpResponse<UpdateProfileResponse>>(
       Options(
