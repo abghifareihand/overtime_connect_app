@@ -3,7 +3,6 @@ import 'package:overtime_connect_app/ui/shared/app_color.dart';
 import 'package:overtime_connect_app/ui/shared/app_font.dart';
 import 'package:overtime_connect_app/ui/utils/extensions.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart';
 
 class ReportCalendarWidget extends StatelessWidget {
   final bool Function(DateTime) isToday;
